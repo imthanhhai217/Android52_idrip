@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/home"
+        android:title="Home"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/wishFragment"
+        android:icon="@drawable/wish_list"
+        android:title="wish"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/categoriesFragment"
+        android:icon="@drawable/category"
+        android:title="category"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/accountFragment"
+        android:icon="@drawable/account"
+        android:title="account"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/cartFragment"
+        android:icon="@drawable/cart"
+        android:title="Cart"
+        app:showAsAction="always" />
+</menu>

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Android52_idrip</string>
+    <string name="fake_link">https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg</string>
+
+    <plurals name="apple">
+        <item quantity="one">I have an apple</item>
+        <item quantity="other">I have %1$d apples</item>
+    </plurals>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
