@@ -1,4 +1,4 @@
-package com.vndevpro.android52_idrip
+package com.vndevpro.android52_idrip.utils
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide

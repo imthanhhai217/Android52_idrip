@@ -10,12 +10,12 @@
 
     <item
         android:id="@+id/wishFragment"
-        android:icon="@drawable/wish_list"
+        android:icon="@drawable/wish"
         android:title="wish"
         app:showAsAction="always" />
     <item
         android:id="@+id/categoriesFragment"
-        android:icon="@drawable/category"
+        android:icon="@drawable/categories"
         android:title="category"
         app:showAsAction="always" />
     <item
