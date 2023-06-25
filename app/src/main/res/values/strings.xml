@@ -8,4 +8,5 @@
     </plurals>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="see_all"><u>See all</u></string>
 </resources>

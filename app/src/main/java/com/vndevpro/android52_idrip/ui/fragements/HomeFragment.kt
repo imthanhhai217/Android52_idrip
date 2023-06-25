@@ -8,18 +8,25 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.denzcoskun.imageslider.constants.AnimationTypes
+import com.denzcoskun.imageslider.constants.ScaleTypes
+import com.denzcoskun.imageslider.models.SlideModel
 import com.vndevpro.android52_idrip.R
 import com.vndevpro.android52_idrip.adapters.ListProductAdapter
 import com.vndevpro.android52_idrip.api.BaseResponse
 import com.vndevpro.android52_idrip.databinding.FragmentHomeBinding
 import com.vndevpro.android52_idrip.models.ListProductResponse
+import com.vndevpro.android52_idrip.models.Product
 import com.vndevpro.android52_idrip.ui.MainActivity
+import kotlin.streams.toList
 
 class HomeFragment : Fragment() {
 
     private val TAG = "HomeFragment"
     lateinit var binding: FragmentHomeBinding
     lateinit var listProductAdapter: ListProductAdapter
+    private val imageList = ArrayList<SlideModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +50,10 @@ class HomeFragment : Fragment() {
             when (it) {
                 is BaseResponse.Success -> {
                     hideLoading()
-                    it.data?.let {
-                        Log.d(TAG, "onCreate: ${it.products.size}")
-                        (activity as MainActivity).fakeModel = it.products[0]
-                        updateData(it)
+                    it.data?.let { response ->
+                        Log.d(TAG, "onCreate: ${response.products.size}")
+                        (activity as MainActivity).fakeModel = response.products[0]
+                        updateData(response)
                     }
                 }
 
@@ -65,7 +72,21 @@ class HomeFragment : Fragment() {
     private fun updateData(response: ListProductResponse) {
         response.products?.let { listProduct ->
             listProductAdapter.updateData(listProduct)
+
+            fetchListHotDeals(listProduct)
         }
+
+    }
+
+    private fun fetchListHotDeals(listProduct: List<Product>) {
+        val hotDeals =
+            listProduct.stream().filter { product -> product.discountPercentage > 15 }.toList()
+        val hotDealAdapter = ListProductAdapter(callback)
+        binding.rvHotDeals.apply {
+            adapter = hotDealAdapter
+            layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        }
+        hotDealAdapter.differ.submitList(hotDeals)
     }
 
     private fun initView() {
@@ -74,6 +95,25 @@ class HomeFragment : Fragment() {
             adapter = listProductAdapter
             layoutManager = GridLayoutManager(activity, 2)
         }
+
+        initDataSlider()
+    }
+
+    private fun initDataSlider() {
+        imageList.add(
+            SlideModel(
+                "https://bit.ly/2YoJ77H", ScaleTypes.FIT
+            )
+        )
+        imageList.add(
+            SlideModel(
+                "https://bit.ly/2BteuF2", ScaleTypes.FIT
+            )
+        )
+        imageList.add(SlideModel("https://bit.ly/3fLJf72", ScaleTypes.FIT))
+
+        binding.imageSlider.setImageList(imageList)
+        binding.imageSlider.setSlideAnimation(AnimationTypes.DEPTH_SLIDE)
     }
 
     private val callback = object : ListProductAdapter.IClickListener {
@@ -83,7 +123,7 @@ class HomeFragment : Fragment() {
             listProductAdapter.notifyItemChanged(position)
             if (product.isWish) {
                 (activity as MainActivity).wishListViewModel.upsertWish(product)
-            }else{
+            } else {
                 (activity as MainActivity).wishListViewModel.deleteWish(product)
             }
         }

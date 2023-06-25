@@ -17,13 +17,21 @@ class HomeViewModel(val homeRepository: HomeRepository, application: Application
     var listProductResponse: ListProductResponse? = null
 
     init {
-        getListProduct()
+        getListProductWithLimit(0)
     }
 
     private fun getListProduct() {
         viewModelScope.launch {
             listProductResult.value = BaseResponse.Loading()
             val result = homeRepository.getListProduct()
+            listProductResult.postValue(handleListProduct(result))
+        }
+    }
+
+    private fun getListProductWithLimit(limit: Int) {
+        viewModelScope.launch {
+            listProductResult.value = BaseResponse.Loading()
+            val result = homeRepository.getListProduct(limit)
             listProductResult.postValue(handleListProduct(result))
         }
     }
