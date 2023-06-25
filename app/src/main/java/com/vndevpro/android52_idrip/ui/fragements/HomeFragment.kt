@@ -19,6 +19,7 @@ import com.vndevpro.android52_idrip.databinding.FragmentHomeBinding
 import com.vndevpro.android52_idrip.models.ListProductResponse
 import com.vndevpro.android52_idrip.models.Product
 import com.vndevpro.android52_idrip.ui.MainActivity
+import com.vndevpro.android52_idrip.utils.Constants
 import kotlin.streams.toList
 
 class HomeFragment : Fragment() {
@@ -78,10 +79,11 @@ class HomeFragment : Fragment() {
 
     }
 
+    lateinit var hotDealAdapter: ListProductAdapter
     private fun fetchListHotDeals(listProduct: List<Product>) {
         val hotDeals =
             listProduct.stream().filter { product -> product.discountPercentage > 15 }.toList()
-        val hotDealAdapter = ListProductAdapter(callback)
+        hotDealAdapter = ListProductAdapter(callbackHostDeals)
         binding.rvHotDeals.apply {
             adapter = hotDealAdapter
             layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -100,20 +102,25 @@ class HomeFragment : Fragment() {
     }
 
     private fun initDataSlider() {
-        imageList.add(
-            SlideModel(
-                "https://bit.ly/2YoJ77H", ScaleTypes.FIT
-            )
-        )
-        imageList.add(
-            SlideModel(
-                "https://bit.ly/2BteuF2", ScaleTypes.FIT
-            )
-        )
-        imageList.add(SlideModel("https://bit.ly/3fLJf72", ScaleTypes.FIT))
+        if (imageList.size < Constants.SLIDER_SIZE) {
+            imageList.clear()
 
-        binding.imageSlider.setImageList(imageList)
-        binding.imageSlider.setSlideAnimation(AnimationTypes.DEPTH_SLIDE)
+            imageList.add(
+                SlideModel(
+                    "https://bit.ly/2YoJ77H", ScaleTypes.FIT
+                )
+            )
+            imageList.add(
+                SlideModel(
+                    "https://bit.ly/2BteuF2", ScaleTypes.FIT
+                )
+            )
+            imageList.add(SlideModel("https://bit.ly/3fLJf72", ScaleTypes.FIT))
+        }
+        binding.imageSlider.apply {
+            setImageList(imageList)
+            setSlideAnimation(AnimationTypes.DEPTH_SLIDE)
+        }
     }
 
     private val callback = object : ListProductAdapter.IClickListener {
@@ -121,6 +128,23 @@ class HomeFragment : Fragment() {
             val product = listProductAdapter.differ.currentList[position]
             product.isWish = !product.isWish
             listProductAdapter.notifyItemChanged(position)
+            if (product.isWish) {
+                (activity as MainActivity).wishListViewModel.upsertWish(product)
+            } else {
+                (activity as MainActivity).wishListViewModel.deleteWish(product)
+            }
+        }
+
+        override fun showDetailsProductListener(position: Int) {
+            TODO("Not yet implemented")
+        }
+    }
+
+    private val callbackHostDeals = object : ListProductAdapter.IClickListener {
+        override fun changeWishStateListener(position: Int) {
+            val product = hotDealAdapter.differ.currentList[position]
+            product.isWish = !product.isWish
+            hotDealAdapter.notifyItemChanged(position)
             if (product.isWish) {
                 (activity as MainActivity).wishListViewModel.upsertWish(product)
             } else {
