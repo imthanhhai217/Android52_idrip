@@ -1,6 +1,7 @@
 package com.vndevpro.android52_idrip.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -9,7 +10,7 @@ import com.vndevpro.android52_idrip.R
 import com.vndevpro.android52_idrip.databinding.LayoutProductItemBinding
 import com.vndevpro.android52_idrip.models.Product
 
-class ListProductAdapter : RecyclerView.Adapter<ListProductAdapter.ProductViewHolder>() {
+class ListProductAdapter(private val callback:IClickListener) : RecyclerView.Adapter<ListProductAdapter.ProductViewHolder>() {
 
     private val diffCallback = object : DiffUtil.ItemCallback<Product>() {
         override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
@@ -22,17 +23,20 @@ class ListProductAdapter : RecyclerView.Adapter<ListProductAdapter.ProductViewHo
 
     }
 
-    private val differ = AsyncListDiffer(this, diffCallback)
+    val differ = AsyncListDiffer(this, diffCallback)
 
     fun updateData(data: List<Product>) {
         differ.submitList(data)
     }
 
-    class ProductViewHolder(private val binding: LayoutProductItemBinding) :
+    class ProductViewHolder(private val binding: LayoutProductItemBinding,private val callback:IClickListener) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bindData(product: Product) {
             binding.product = product
+            binding.imgWishlist.setOnClickListener(View.OnClickListener {
+                callback.changeWishStateListener(adapterPosition)
+            })
         }
     }
 
@@ -40,7 +44,7 @@ class ListProductAdapter : RecyclerView.Adapter<ListProductAdapter.ProductViewHo
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.layout_product_item, parent, false)
         val binding = LayoutProductItemBinding.bind(view)
-        return ProductViewHolder(binding)
+        return ProductViewHolder(binding,callback)
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
@@ -48,4 +52,10 @@ class ListProductAdapter : RecyclerView.Adapter<ListProductAdapter.ProductViewHo
     }
 
     override fun getItemCount() = differ.currentList.size
+
+    interface IClickListener{
+        fun changeWishStateListener(position: Int)
+        fun showDetailsProductListener(position: Int)
+
+    }
 }
