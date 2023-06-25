@@ -69,10 +69,27 @@ class HomeFragment : Fragment() {
     }
 
     private fun initView() {
-        listProductAdapter = ListProductAdapter()
+        listProductAdapter = ListProductAdapter(callback)
         binding.rvListProduct.apply {
             adapter = listProductAdapter
             layoutManager = GridLayoutManager(activity, 2)
+        }
+    }
+
+    private val callback = object : ListProductAdapter.IClickListener {
+        override fun changeWishStateListener(position: Int) {
+            val product = listProductAdapter.differ.currentList[position]
+            product.isWish = !product.isWish
+            listProductAdapter.notifyItemChanged(position)
+            if (product.isWish) {
+                (activity as MainActivity).wishListViewModel.upsertWish(product)
+            }else{
+                (activity as MainActivity).wishListViewModel.deleteWish(product)
+            }
+        }
+
+        override fun showDetailsProductListener(position: Int) {
+            TODO("Not yet implemented")
         }
     }
 
