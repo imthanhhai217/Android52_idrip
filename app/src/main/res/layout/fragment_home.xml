@@ -15,8 +15,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvListProduct"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/_16sdp" />
+                android:layout_height="match_parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

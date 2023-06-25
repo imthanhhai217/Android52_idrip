@@ -1,9 +1,17 @@
 package com.vndevpro.android52_idrip.models
 
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity
 data class Product(
+    @SerializedName("id")
+    @PrimaryKey
+    val id: Int,
+//    @ColumnInfo(name = "Brand")
     @SerializedName("brand")
     val brand: String,
     @SerializedName("category")
@@ -12,8 +20,6 @@ data class Product(
     val description: String,
     @SerializedName("discountPercentage")
     val discountPercentage: Double,
-    @SerializedName("id")
-    val id: Int,
     @SerializedName("images")
     val images: List<String>,
     @SerializedName("price")

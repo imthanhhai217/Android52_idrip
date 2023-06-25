@@ -45,6 +45,7 @@ class HomeFragment : Fragment() {
                     hideLoading()
                     it.data?.let {
                         Log.d(TAG, "onCreate: ${it.products.size}")
+                        (activity as MainActivity).fakeModel = it.products[0]
                         updateData(it)
                     }
                 }
