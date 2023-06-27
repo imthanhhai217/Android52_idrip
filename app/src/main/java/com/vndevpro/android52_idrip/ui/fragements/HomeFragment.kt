@@ -75,6 +75,9 @@ class HomeFragment : Fragment() {
             listProductAdapter.updateData(listProduct)
 
             fetchListHotDeals(listProduct)
+            listProductAdapter.updateData(listProduct)
+
+            fetchListMostPopular(listProduct)
         }
 
     }
@@ -89,6 +92,18 @@ class HomeFragment : Fragment() {
             layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         }
         hotDealAdapter.differ.submitList(hotDeals)
+    }
+
+    lateinit var mostPopularAdapter: ListProductAdapter
+    private fun fetchListMostPopular(listProduct: List<Product>) {
+        val mostPopular =
+            listProduct.stream().filter { product -> product.rating > 4.8 }.toList()
+        mostPopularAdapter = ListProductAdapter(callbackHostDeals)
+        binding.rvMostPopular.apply {
+            adapter = mostPopularAdapter
+            layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        }
+        mostPopularAdapter.differ.submitList(mostPopular)
     }
 
     private fun initView() {
