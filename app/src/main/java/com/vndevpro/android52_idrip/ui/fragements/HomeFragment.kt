@@ -20,6 +20,7 @@ import com.vndevpro.android52_idrip.models.ListProductResponse
 import com.vndevpro.android52_idrip.models.Product
 import com.vndevpro.android52_idrip.ui.MainActivity
 import com.vndevpro.android52_idrip.utils.Constants
+import java.util.function.Consumer
 import kotlin.streams.toList
 
 class HomeFragment : Fragment() {
@@ -28,6 +29,8 @@ class HomeFragment : Fragment() {
     lateinit var binding: FragmentHomeBinding
     lateinit var listProductAdapter: ListProductAdapter
     private val imageList = ArrayList<SlideModel>()
+    private var wishListData: List<Product>? = null
+    private var listData: List<Product>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,8 +55,8 @@ class HomeFragment : Fragment() {
                 is BaseResponse.Success -> {
                     hideLoading()
                     it.data?.let { response ->
+                        listData = it.data.products
                         Log.d(TAG, "onCreate: ${response.products.size}")
-                        (activity as MainActivity).fakeModel = response.products[0]
                         updateData(response)
                     }
                 }
@@ -68,15 +71,19 @@ class HomeFragment : Fragment() {
                 }
             }
         })
+
+        (activity as MainActivity).wishListViewModel.getAllWishList().observe(viewLifecycleOwner) {
+            wishListData = it
+            listData?.let { it1 -> fetchListHotDeals(it1) }
+            listData?.let { it1 -> fetchListMostPopular(it1) }
+        };
     }
 
     private fun updateData(response: ListProductResponse) {
         response.products?.let { listProduct ->
-            listProductAdapter.updateData(listProduct)
+//            listProductAdapter.updateData(listProduct)
 
             fetchListHotDeals(listProduct)
-            listProductAdapter.updateData(listProduct)
-
             fetchListMostPopular(listProduct)
         }
 
@@ -91,18 +98,43 @@ class HomeFragment : Fragment() {
             adapter = hotDealAdapter
             layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         }
+
+//        reset wish
+        hotDeals.forEach(Consumer {
+            it.isWish = false
+        })
+
+        wishListData?.forEach(Consumer { wishProduct ->
+            val index = hotDeals.indexOfFirst { wishProduct.id == it.id }
+            if (index >= 0) {
+                hotDeals[index].isWish = true
+            }
+        })
+
         hotDealAdapter.differ.submitList(hotDeals)
     }
 
     lateinit var mostPopularAdapter: ListProductAdapter
     private fun fetchListMostPopular(listProduct: List<Product>) {
-        val mostPopular =
-            listProduct.stream().filter { product -> product.rating > 4.8 }.toList()
+        val mostPopular = listProduct.stream().filter { product -> product.rating > 4.8 }.toList()
         mostPopularAdapter = ListProductAdapter(callbackHostDeals)
         binding.rvMostPopular.apply {
             adapter = mostPopularAdapter
             layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         }
+
+
+//        reset wish
+        mostPopular.forEach(Consumer {
+            it.isWish = false
+        })
+
+        wishListData?.forEach(Consumer { wishProduct ->
+            val index = mostPopular.indexOfFirst { wishProduct.id == it.id }
+            if (index >= 0) {
+                mostPopular[index].isWish = true
+            }
+        })
         mostPopularAdapter.differ.submitList(mostPopular)
     }
 
@@ -168,7 +200,6 @@ class HomeFragment : Fragment() {
         }
 
         override fun showDetailsProductListener(position: Int) {
-            TODO("Not yet implemented")
         }
     }
 

@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var homeViewModel: HomeViewModel
     lateinit var wishListViewModel: WishListViewModel
-    lateinit var fakeModel: Product
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
