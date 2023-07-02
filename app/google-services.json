@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "363282817089",
+    "project_id": "idrip-783f2",
+    "storage_bucket": "idrip-783f2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363282817089:android:585ceca4572132118e66c0",
+        "android_client_info": {
+          "package_name": "com.vndevpro.android52_idrip16"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "363282817089-dgpa2a93paie0rv5rc313mm2ppi3jbmj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDW88CvWzZDsieNoUlWtO5FvW79lhXlC6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "363282817089-dgpa2a93paie0rv5rc313mm2ppi3jbmj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
