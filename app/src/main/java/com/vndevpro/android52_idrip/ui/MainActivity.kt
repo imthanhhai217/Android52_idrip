@@ -9,19 +9,16 @@ import androidx.navigation.ui.setupWithNavController
 import com.vndevpro.android52_idrip.R
 import com.vndevpro.android52_idrip.databases.wishdb.WishListDatabase
 import com.vndevpro.android52_idrip.databinding.ActivityMainBinding
-import com.vndevpro.android52_idrip.models.Product
 import com.vndevpro.android52_idrip.repositories.HomeRepository
 import com.vndevpro.android52_idrip.repositories.WishListRepository
-import com.vndevpro.android52_idrip.ui.viewmodels.HomeViewModel
-import com.vndevpro.android52_idrip.ui.viewmodels.HomeViewModelFactory
-import com.vndevpro.android52_idrip.ui.viewmodels.WishListViewModel
-import com.vndevpro.android52_idrip.ui.viewmodels.WishListViewModelFactory
+import com.vndevpro.android52_idrip.ui.viewmodels.*
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     lateinit var binding: ActivityMainBinding
     lateinit var homeViewModel: HomeViewModel
     lateinit var wishListViewModel: WishListViewModel
+    lateinit var accountViewModel: AccountViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +35,13 @@ class MainActivity : AppCompatActivity() {
 
         initHomeViewModel()
         initWishListViewModel()
+        initAccountViewModel()
+    }
+
+    private fun initAccountViewModel() {
+        val accountViewModelFactory = AccountViewModelFactory(application)
+        accountViewModel =
+            ViewModelProvider(this, accountViewModelFactory)[AccountViewModel::class.java]
     }
 
     private fun initWishListViewModel() {

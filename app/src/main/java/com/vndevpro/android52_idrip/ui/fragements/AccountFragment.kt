@@ -1,60 +1,106 @@
 package com.vndevpro.android52_idrip.ui.fragements
 
+import android.app.Activity.RESULT_CANCELED
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseUser
 import com.vndevpro.android52_idrip.R
+import com.vndevpro.android52_idrip.databinding.FragmentAccountBinding
+import com.vndevpro.android52_idrip.ui.MainActivity
+import com.vndevpro.android52_idrip.ui.viewmodels.AccountViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [AccountFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AccountFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    lateinit var accountViewModel: AccountViewModel
+    lateinit var binding: FragmentAccountBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false)
+        val view = inflater.inflate(R.layout.fragment_account, container, false)
+        binding = FragmentAccountBinding.bind(view)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AccountFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AccountFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        accountViewModel = (activity as MainActivity).accountViewModel
+        accountViewModel.callback = onSignInStatedListener
+
+        binding.btnSignInOneTap.setOnClickListener {
+            accountViewModel.signInWithOneTap()
+        }
+        binding.btnSignOut.setOnClickListener {
+            accountViewModel.signOut()
+        }
+        binding.btnRegister.setOnClickListener {
+            val email = binding.edtUserName.text.toString()
+            val passwords = binding.edtPassword.text.toString()
+            accountViewModel.registerWithEmailAndPassword(email, passwords)
+        }
+
+        binding.btnSignInWithPasswords.setOnClickListener {
+            val email = binding.edtUserName.text.toString()
+            val passwords = binding.edtPassword.text.toString()
+            accountViewModel.signInWithEmailAndPassword(email, passwords)
+        }
+
+        accountViewModel._currentUser.observe(viewLifecycleOwner, Observer {
+            updateUi(it)
+        })
+
     }
+
+    private fun updateUi(it: FirebaseUser?) {
+        binding.user = it
+    }
+
+    private val onSignInStatedListener = object : AccountViewModel.OnSignInStated {
+        override fun startSignIn(signInClient: GoogleSignInClient) {
+            signInClient?.signInIntent?.let {
+                signInLauncher.launch(it)
+            }
+        }
+    }
+
+    private val signInLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
+            ActivityResultCallback {
+                if (it.resultCode == RESULT_OK && it.data != null) {
+                    try {
+                        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+                        val account = task.getResult(ApiException::class.java)
+                        account.idToken?.let { token ->
+                            accountViewModel.firebaseAuthWithToken(token)
+                        }
+                    } catch (e: ApiException) {
+                        Toast.makeText(activity, "Sign Failed : ${e.message}", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+                if (it.resultCode == RESULT_CANCELED) {
+                    Log.d("TAG", "RESULT_CANCELED : ")
+                }
+            })
 }
