@@ -23,7 +23,7 @@ class RetrofitClient {
             }
         }
 
-        val getDummyApi = instances.create(DummyApi::class.java)
+        val getDummyApi: DummyApi = instances.create(DummyApi::class.java)
     }
 
 }
