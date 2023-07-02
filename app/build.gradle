@@ -10,7 +10,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.vndevpro.android52_idrip"
+        applicationId "com.vndevpro.android52_idrip89"
         minSdk 24
         targetSdk 33
         versionCode 1
