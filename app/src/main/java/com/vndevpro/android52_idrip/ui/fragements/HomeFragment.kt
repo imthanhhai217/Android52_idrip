@@ -183,7 +183,6 @@ class HomeFragment : Fragment() {
         }
 
         override fun showDetailsProductListener(position: Int) {
-            TODO("Not yet implemented")
         }
     }
 
