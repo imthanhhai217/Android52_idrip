@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "772157665982",
+    "firebase_url": "https://idrip2-default-rtdb.firebaseio.com",
     "project_id": "idrip2",
     "storage_bucket": "idrip2.appspot.com"
   },

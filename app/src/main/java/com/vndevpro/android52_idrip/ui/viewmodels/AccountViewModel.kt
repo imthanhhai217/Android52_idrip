@@ -16,13 +16,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vndevpro.android52_idrip.R
 
-class AccountViewModel(private val application: Application) : AndroidViewModel(application) {
+class AccountViewModel(private val myApplication: Application) : AndroidViewModel(myApplication) {
     private var auth: FirebaseAuth = Firebase.auth
     private var currentUser: MutableLiveData<FirebaseUser?> = MutableLiveData()
     var _currentUser: MutableLiveData<FirebaseUser?> = currentUser
     private val signInRequest =
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(
-            application.getString(
+            myApplication.getString(
                 R.string.client_id
             )
         ).requestEmail().build()
@@ -32,7 +32,7 @@ class AccountViewModel(private val application: Application) : AndroidViewModel(
     }
 
     private val signInClient: GoogleSignInClient =
-        GoogleSignIn.getClient(application, signInRequest)
+        GoogleSignIn.getClient(myApplication, signInRequest)
     lateinit var callback: OnSignInStated
 
     fun signInWithOneTap() {
@@ -51,17 +51,17 @@ class AccountViewModel(private val application: Application) : AndroidViewModel(
         }.addOnFailureListener {
             currentUser.value = null
             Log.d("TAG", "addOnFailureListener: ${it.message}")
-            Toast.makeText(application, "Sign in failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(myApplication, "Sign in failed", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun updateData(it: AuthResult?) {
         if (it != null) {
             currentUser.value = it.user
-            Toast.makeText(application, "Sign in success", Toast.LENGTH_SHORT).show()
+            Toast.makeText(myApplication, "Sign in success", Toast.LENGTH_SHORT).show()
         } else {
             currentUser.value = null
-            Toast.makeText(application, "Sign in failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(myApplication, "Sign in failed", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -71,7 +71,7 @@ class AccountViewModel(private val application: Application) : AndroidViewModel(
         }.addOnFailureListener {
             currentUser.value = null
             Log.d("TAG", "addOnFailureListener: ${it.message}")
-            Toast.makeText(application, "Register failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(myApplication, "Register failed", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -81,7 +81,7 @@ class AccountViewModel(private val application: Application) : AndroidViewModel(
         }.addOnFailureListener {
             currentUser.value = null
             Log.d("TAG", "addOnFailureListener: ${it.message}")
-            Toast.makeText(application, "Sign in failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(myApplication, "Sign in failed", Toast.LENGTH_SHORT).show()
         }
     }
 

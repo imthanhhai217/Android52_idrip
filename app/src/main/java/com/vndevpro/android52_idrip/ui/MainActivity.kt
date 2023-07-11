@@ -1,6 +1,8 @@
 package com.vndevpro.android52_idrip.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -12,6 +14,7 @@ import com.vndevpro.android52_idrip.databinding.ActivityMainBinding
 import com.vndevpro.android52_idrip.repositories.HomeRepository
 import com.vndevpro.android52_idrip.repositories.WishListRepository
 import com.vndevpro.android52_idrip.ui.viewmodels.*
+import com.vndevpro.android52_idrip.utils.Constants
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -19,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var homeViewModel: HomeViewModel
     lateinit var wishListViewModel: WishListViewModel
     lateinit var accountViewModel: AccountViewModel
+    lateinit var categoriesViewModel: CategoriesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,48 @@ class MainActivity : AppCompatActivity() {
         initHomeViewModel()
         initWishListViewModel()
         initAccountViewModel()
+        initCategoriesViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val openTab = intent.getStringExtra(Constants.OPEN_TAB_FROM_NOTIFICATION) ?: null
+        if (openTab != null) {
+            Log.d(TAG, "onResume: $openTab")
+            openTab(openTab)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val openTab = intent?.getStringExtra(Constants.OPEN_TAB_FROM_NOTIFICATION) ?: null
+        if (openTab != null) {
+            Log.d(TAG, "onResume: $openTab")
+            openTab(openTab)
+        }
+    }
+
+    private fun openTab(openTab: String) {
+        when (openTab) {
+            "1" -> {
+                binding.bottomNavigation.selectedItemId = R.id.wishFragment
+            }
+            "2" -> {
+                binding.bottomNavigation.selectedItemId = R.id.categoriesFragment
+            }
+            "3" -> {
+                binding.bottomNavigation.selectedItemId = R.id.accountFragment
+            }
+            "4" -> {
+                binding.bottomNavigation.selectedItemId = R.id.cartFragment
+            }
+        }
+    }
+
+    private fun initCategoriesViewModel() {
+        val categoriesViewModelFactory = CategoriesViewModelFactory(application)
+        categoriesViewModel =
+            ViewModelProvider(this, categoriesViewModelFactory)[CategoriesViewModel::class.java]
     }
 
     private fun initAccountViewModel() {
@@ -57,6 +103,4 @@ class MainActivity : AppCompatActivity() {
         val homeViewModelFactory = HomeViewModelFactory(homeRepository, application = application)
         homeViewModel = ViewModelProvider(this, homeViewModelFactory)[HomeViewModel::class.java]
     }
-
-
 }

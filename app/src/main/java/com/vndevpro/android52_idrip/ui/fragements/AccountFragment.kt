@@ -1,5 +1,6 @@
 package com.vndevpro.android52_idrip.ui.fragements
 
+import android.Manifest
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.os.Bundle
@@ -20,6 +21,7 @@ import com.vndevpro.android52_idrip.R
 import com.vndevpro.android52_idrip.databinding.FragmentAccountBinding
 import com.vndevpro.android52_idrip.ui.MainActivity
 import com.vndevpro.android52_idrip.ui.viewmodels.AccountViewModel
+import com.vndevpro.android52_idrip.utils.PermissionHelper
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -70,7 +72,26 @@ class AccountFragment : Fragment() {
             updateUi(it)
         })
 
+
+        binding.btnPermission.setOnClickListener {
+            PermissionHelper.askPermission(
+                requestPermissionLauncher,
+                activity as MainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        }
     }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission(),
+            ActivityResultCallback { isGranted ->
+                if (isGranted) {
+                    Log.d("TAG", ": requestPermissionLauncher granted")
+                } else {
+                    Log.d("TAG", ": requestPermissionLauncher denied")
+                }
+            })
+
 
     private fun updateUi(it: FirebaseUser?) {
         binding.user = it

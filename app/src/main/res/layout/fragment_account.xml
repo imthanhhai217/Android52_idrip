@@ -68,6 +68,13 @@
                 android:gravity="center"
                 android:text="Sign Out"
                 android:visibility="@{user != null?View.VISIBLE:View.GONE}" />
+
+            <Button
+                android:id="@+id/btnPermission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Location" />
         </LinearLayout>
 
     </FrameLayout>
